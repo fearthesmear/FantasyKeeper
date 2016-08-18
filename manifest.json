@@ -1,0 +1,16 @@
+{
+  "manifest_version": 2,
+
+  "name": "fantasykeeper",
+  "description": "Google Chrome Extension for ESPN Fantasy Baseball to display contract information, minor leaguer rosters, and advanced stats",
+  "version": "0.01",
+
+  "browser_action": {
+    "default_icon": "baseballicon.png",
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "activeTab",
+    "https://ajax.googleapis.com/"
+  ]
+}
