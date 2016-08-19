@@ -3,6 +3,16 @@
 *
 */
 
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    if( request.message === "clicked_browser_action" ) {
+      var firstHref = $("a[href^='http']").eq(0).attr("href");
+
+      console.log(firstHref);
+    }
+  }
+);
+
 var elements = document.getElementsByTagName('*');
 
 for (var i = 0; i < elements.length; i++) {
@@ -13,7 +23,7 @@ for (var i = 0; i < elements.length; i++) {
 
         if (node.nodeType === 3) {
             var text = node.nodeValue;
-            var replacedText = text.replace(/Murphy/gi, 'God');
+            var replacedText = text.replace(/Murphy/gi, 'Ass');
 
             if (replacedText !== text) {
                 element.replaceChild(document.createTextNode(replacedText), node);
@@ -21,3 +31,13 @@ for (var i = 0; i < elements.length; i++) {
         }
     }
 }
+printnames();
+
+
+function printnames() {
+    console.log("here")
+    $('.playertablePlayerName').children(':first-child').each(function () {
+        console.log($(this).text());
+    });
+}
+
