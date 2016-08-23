@@ -36,12 +36,15 @@ function printnames() {
     id = []
     $('.playertablePlayerName').children([':first-child']).each(function () {
         //console.log($(this).text());
-        roster.push($(this).text());
-        // Example of changing text
-        // $(this).text("Mark Smearcheck");
+        if ($(this).text() !== "" && $(this).text() !== "PP" && $(this).text() !== "DL15" && $(this).text() !== "DL60"){
+          roster.push($(this).text());
+          // Example of changing text
+          //$(this).text("Mark Smearcheck");
+          $(this).append(", 2016 $1")
+        }
     });
     // Example of getting attribute
-    
+
     $('.playertablePlayerName').children([':first-child']).each(function () {
         //console.log($(this).text());
         id.push($(this).attr("playerid"));
