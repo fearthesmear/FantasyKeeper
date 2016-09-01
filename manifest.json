@@ -9,6 +9,9 @@
     "default_icon": "baseballicon.png",
     "default_popup": "popup.html"
   },
+  "icons": {
+      "48": "baseballicon48.png"
+  },
   "permissions": [
     "activeTab",
     "https://ajax.googleapis.com/",
