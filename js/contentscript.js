@@ -7,6 +7,9 @@
 // TODO: How do I handle spaces in last names like Jr or Names like Byung
 //       Ho Park?
 // TODO: Only load from Google Sheets once
+// In Google Sheets how to autopopulate
+//    =CONCATENATE(ImportRange("1NjCm1SodkaagsRXvHM4BrThg1pM4d_DYxSC_Cibe1Ds","2016!B2"), ", ", (ImportRange("1NjCm1SodkaagsRXvHM4BrThg1pM4d_DYxSC_Cibe1Ds","2016!C2")))
+
 
 var observerConfig = {
     childList: true,
@@ -20,29 +23,6 @@ $(document).ready(function(){
                  // rest of script from with .getJSON.
     addESPNEvents();
 });
-
-
-var elements = document.getElementsByTagName('*');
-function replacetext(){
-    /* Traverse the DOM and search for text. Replace text with new text.
-    */
-    for (var i = 0; i < elements.length; i++) {
-        var element = elements[i];
-        console.log(element)
-        for (var j = 0; j < element.childNodes.length; j++) {
-            var node = element.childNodes[j];
-
-            if (node.nodeType === 3) {
-                var text = node.nodeValue;
-                var replacedText = text.replace(/Murphy/gi, 'God');
-
-                if (replacedText !== text) {
-                    //element.replaceChild(document.createTextNode(replacedText), node);
-                }
-            }
-        }
-    }
-}
 
 function addESPNEvents() {
     /* Reruns importSheet() when a button is clicked on the page. If this is
@@ -187,12 +167,18 @@ function populate_site_player_table(site_player_db_info){
             $(this).after('<td class="playertableData">$' + String(site_player_db_info[ii].cost) + '</td>');
             ii = ii + 1;
         }
+        else{
+            $(this).after('<td class="playertableData">--</td>');
+        }
     })
     ii = 0;
     $('tr.pncPlayerRow td:last-child').each(function(){
         if ($(this).text() != '--'){
             $(this).after('<td class="playertableData">' + String(site_player_db_info[ii].year) + '</td>');
             ii = ii + 1;
+        }
+        else{
+            $(this).after('<td class="playertableData">--</td>');
         }
     })
 
