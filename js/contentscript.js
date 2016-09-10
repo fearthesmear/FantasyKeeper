@@ -3,24 +3,41 @@
 *
 */
 
-// TODO: Add cut column to roster db.
+// TODO: How to handle cut players only matters for team pages. Maybe I don't to
+//       make it more general.
+// TODO: Fuzzy name matching. Maybe a percentage match?
 // TODO: How do I handle spaces in last names like Jr or Names like Byung
 //       Ho Park?
 // TODO: Only load from Google Sheets once
 // In Google Sheets how to autopopulate
 //    =CONCATENATE(ImportRange("1NjCm1SodkaagsRXvHM4BrThg1pM4d_DYxSC_Cibe1Ds","2016!B2"), ", ", (ImportRange("1NjCm1SodkaagsRXvHM4BrThg1pM4d_DYxSC_Cibe1Ds","2016!C2")))
-
+// TODO: Bug on non "STATS" tabs due to checking for "--". Maybe check if first
+//       cell in row is empty instead
 
 var observerConfig = {
     childList: true,
     characterData: true,
     subtree: false  // Prevents infinite loop in MutationObserver
 };
+var sheetID = ""
+var lastLabel = ""
+var firstLabel = ""
+var costLabel = ""
+var yearLabel = ""
 
 $(document).ready(function(){
 
-    importSheet(); // Async event due to .getJSON so need to run
-                 // rest of script from with .getJSON.
+    chrome.storage.sync.get(['sheetid', 'lastlabel', 'firstlabel', 'costlabel',
+                             'yearlabel'], function(items) {
+        sheetID = items.sheetid
+        lastLabel = items.lastlabel
+        firstLabel = items.firstlabel
+        costLabel = items.costlabel
+        yearLabel = items.yearlabel
+        importSheet( );
+    }); // Async event due to .getJSON and Chrome storage retreival so need to
+      // run rest of script from with .getJSON.
+
     addESPNEvents();
 });
 
@@ -41,7 +58,7 @@ function addESPNEvents() {
     observerESPN.observe(target, observerConfig);
 }
 
-function importSheet(){
+function importSheet(items){
     /* Get the Player Auction Values Google Sheet as JSON. Parse player auction
      * information into an array. Since get JSON is an async function, the
      * rest of the script that displays the player auction information will to
@@ -49,12 +66,10 @@ function importSheet(){
      */
 
     // ID of the Google Spreadsheet
-    //var spreadsheetID = "1aWTgjbsf998zOCMY06hndLEBWm5LuWWCLJBZgflNk88";
-    var spreadsheetID = "1NjCm1SodkaagsRXvHM4BrThg1pM4d_DYxSC_Cibe1Ds";
     var worksheetID = 1;
 
     // Make sure it is public or set to Anyone with link can view
-    var url = "https://spreadsheets.google.com/feeds/list/" + spreadsheetID + "/1/public/full?alt=json";
+    var url = "https://spreadsheets.google.com/feeds/list/" + sheetID + "/1/public/full?alt=json";
 
     var rosterdb = [];
     var rosterdbpop = [];
@@ -63,13 +78,13 @@ function importSheet(){
         //console.log(data);
         for (i = 0; i < data.feed.entry.length; i++) {
             var entry = {
-                first: data.feed.entry[i].gsx$first.$t,
-                last: data.feed.entry[i].gsx$last.$t,
+                first: eval("data.feed.entry[i].gsx$" + firstLabel.toLowerCase() + ".$t"),
+                last: eval("data.feed.entry[i].gsx$" + lastLabel.toLowerCase() + ".$t"),
                 team: data.feed.entry[i].gsx$team.$t,
                 position: data.feed.entry[i].gsx$position.$t,
                 mlb: data.feed.entry[i].gsx$mlb.$t,
-                year: data.feed.entry[i].gsx$year.$t,
-                cost: data.feed.entry[i].gsx$cost.$t,
+                year: eval("data.feed.entry[i].gsx$" + yearLabel.toLowerCase() + ".$t"),
+                cost: eval("data.feed.entry[i].gsx$" + costLabel.toLowerCase() + ".$t"),
                 minors: data.feed.entry[i].gsx$minors.$t,
             }
             //rosterdb.push(String(data.feed.entry[i].gsx$last.$t));
@@ -157,13 +172,16 @@ function match_player_site_to_rosterdb(rosterdb, site_player){
 function populate_site_player_table(site_player_db_info){
 
     var header = $('.playerTableTable tr:nth-child(2) td:nth-child(2)').text();
-    $('.playerTableTable tr:nth-child(1) th:last-child').attr('colspan', '5')
+    $('.playerTableTable tr:nth-child(1) th:last-child').attr('colspan', '5') // TODO: In other tabs this is not wide enough.
+                                                                              //       Need a way to figure out width of row below
+                                                                              //       and use that.
     $('.playerTableTable tr:nth-child(2) td:last-child').after('<td width="25px">COST</td>');
     $('.playerTableTable tr:nth-child(2) td:last-child').after('<td width="25px">YEAR</td>');
 
     ii = 0;
     $('tr.pncPlayerRow td:last-child').each(function(){
-        if ($(this).text() != '--'){
+        // TODO: Can't just check for dashes. Doesn't work for all tabs.
+        if ($(this).text() != '--' && $(this).text() != ''){
             $(this).after('<td class="playertableData">$' + String(site_player_db_info[ii].cost) + '</td>');
             ii = ii + 1;
         }
@@ -173,7 +191,7 @@ function populate_site_player_table(site_player_db_info){
     })
     ii = 0;
     $('tr.pncPlayerRow td:last-child').each(function(){
-        if ($(this).text() != '--'){
+        if ($(this).text() != '--' && $(this).text() != ''){
             $(this).after('<td class="playertableData">' + String(site_player_db_info[ii].year) + '</td>');
             ii = ii + 1;
         }

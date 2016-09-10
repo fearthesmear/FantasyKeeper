@@ -9,12 +9,17 @@
     "default_icon": "baseballicon.png",
     "default_popup": "popup.html"
   },
+  "options_ui": {
+    "page": "options.html",
+    "chrome_style": true
+  },
+
   "icons": {
       "48": "baseballicon48.png"
   },
   "permissions": [
+    "storage",
     "activeTab",
-    "https://ajax.googleapis.com/",
     "http://*.google.com/",
     "https://*.google.com/"
   ],
