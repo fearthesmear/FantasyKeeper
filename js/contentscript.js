@@ -11,8 +11,7 @@
 // TODO: Only load from Google Sheets once
 // In Google Sheets how to autopopulate
 //    =CONCATENATE(ImportRange("1NjCm1SodkaagsRXvHM4BrThg1pM4d_DYxSC_Cibe1Ds","2016!B2"), ", ", (ImportRange("1NjCm1SodkaagsRXvHM4BrThg1pM4d_DYxSC_Cibe1Ds","2016!C2")))
-// TODO: Bug on non "STATS" tabs due to checking for "--". Maybe check if first
-//       cell in row is empty instead
+// TODO: Make extra data column names configurable
 
 var observerConfig = {
     childList: true,
@@ -181,7 +180,7 @@ function populate_site_player_table(site_player_db_info){
     ii = 0;
     $('tr.pncPlayerRow td:last-child').each(function(){
         // TODO: Can't just check for dashes. Doesn't work for all tabs.
-        if ($(this).text() != '--' && $(this).text() != ''){
+        if ($(this).parent().children("td:nth-child(2)").text() != '\xa0'){
             $(this).after('<td class="playertableData">$' + String(site_player_db_info[ii].cost) + '</td>');
             ii = ii + 1;
         }
@@ -191,7 +190,7 @@ function populate_site_player_table(site_player_db_info){
     })
     ii = 0;
     $('tr.pncPlayerRow td:last-child').each(function(){
-        if ($(this).text() != '--' && $(this).text() != ''){
+        if ($(this).parent().children("td:nth-child(2)").text() != '\xa0'){
             $(this).after('<td class="playertableData">' + String(site_player_db_info[ii].year) + '</td>');
             ii = ii + 1;
         }
