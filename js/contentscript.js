@@ -3,26 +3,24 @@
 *
 */
 
-// TODO: How to handle cut players only matters for team pages. Maybe I don't to
-//       make it more general.
-// TODO: Fuzzy name matching. Maybe a percentage match?
+// TODO: Fuzzy name matching. Maybe a percentage match? fuzzyset.js
 // TODO: How do I handle spaces in last names like Jr or Names like Byung
 //       Ho Park?
-// TODO: Only load from Google Sheets once
 // In Google Sheets how to autopopulate
 //    =CONCATENATE(ImportRange("1NjCm1SodkaagsRXvHM4BrThg1pM4d_DYxSC_Cibe1Ds","2016!B2"), ", ", (ImportRange("1NjCm1SodkaagsRXvHM4BrThg1pM4d_DYxSC_Cibe1Ds","2016!C2")))
-// TODO: Make extra data column names configurable
+// TODO: Make extra data column names configurable to make more general.
 
 var observerConfig = {
     childList: true,
     characterData: true,
     subtree: false  // Prevents infinite loop in MutationObserver
 };
-var sheetID = ""
-var lastLabel = ""
-var firstLabel = ""
-var costLabel = ""
-var yearLabel = ""
+var sheetID = "";
+var lastLabel = "";
+var firstLabel = "";
+var costLabel = "";
+var yearLabel = "";
+
 
 $(document).ready(function(){
 
@@ -73,8 +71,9 @@ function importSheet(items){
     var rosterdb = [];
     var rosterdbpop = [];
 
+    if rosterdb.length == 0
+
     $.getJSON(url, function(data) {
-        //console.log(data);
         for (i = 0; i < data.feed.entry.length; i++) {
             var entry = {
                 first: eval("data.feed.entry[i].gsx$" + firstLabel.toLowerCase() + ".$t"),
@@ -86,7 +85,6 @@ function importSheet(items){
                 cost: eval("data.feed.entry[i].gsx$" + costLabel.toLowerCase() + ".$t"),
                 minors: data.feed.entry[i].gsx$minors.$t,
             }
-            //rosterdb.push(String(data.feed.entry[i].gsx$last.$t));
             rosterdb.push(entry);
         }
         console.log(rosterdb)
