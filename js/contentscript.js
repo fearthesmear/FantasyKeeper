@@ -3,9 +3,6 @@
 *
 */
 
-// TODO: Fuzzy name matching. Maybe a percentage match? fuzzyset.js
-// TODO: How do I handle spaces in last names like Jr or Names like Byung
-//       Ho Park?
 // In Google Sheets how to autopopulate
 //    =CONCATENATE(ImportRange("1NjCm1SodkaagsRXvHM4BrThg1pM4d_DYxSC_Cibe1Ds","2016!B2"), ", ", (ImportRange("1NjCm1SodkaagsRXvHM4BrThg1pM4d_DYxSC_Cibe1Ds","2016!C2")))
 // TODO: Make extra data column names configurable to make more general.
@@ -33,7 +30,7 @@ $(document).ready(function(){
         yearLabel = items.yearlabel
         importSheet( );
     }); // Async event due to .getJSON and Chrome storage retreival so need to
-      // run rest of script from with .getJSON.
+        // run rest of script from with .getJSON.
 
     addESPNEvents();
 });
@@ -71,7 +68,6 @@ function importSheet(items){
     var rosterdb = [];
     var rosterdbpop = [];
 
-    if rosterdb.length == 0
 
     $.getJSON(url, function(data) {
         for (i = 0; i < data.feed.entry.length; i++) {
@@ -134,34 +130,27 @@ function get_fantasy_site_player_names() {
 function match_player_site_to_rosterdb(rosterdb, site_player){
     /* Return the rosterdb entry for the player on the fantasy site roster
     */
-    // Break the site player name into first and last name
-    // TODO: How do I handle spaces in last names like JR or Names like Byung
-    //       Ho Park?
+
     var site_player_db_info = {
         cost: '0',
         year: '--'
     }
+    // Break the site player name into first and last name
     index = site_player.indexOf(" ");
     first_name = site_player.substr(0, index);
     last_name = site_player.substr(index+1);
 
     for (j = 0; j < rosterdb.length; j++){
-        // Match site_player's last name to rosterdb player.
-        var site_player_last_name = new RegExp(last_name);
-        var result_last = site_player_last_name.test(rosterdb[j].last)
-        if(result_last){
-            //console.log("Matched " + last_name + " to " + rosterdb[j].last);
-            // If the last name matched, see if the first name matches
-            var site_player_first_name = new RegExp(first_name);
-            var result_first = site_player_first_name.test(rosterdb[j].first)
-            if(result_first){
-                //console.log("Matched " + first_name + " " + last_name + " to " +
-                //            rosterdb[j].first + " " + rosterdb[j].last);
-                site_player_db_info.cost = rosterdb[j].cost;
-                site_player_db_info.year = rosterdb[j].year;
-                return site_player_db_info;
-            }
+        a = FuzzySet();
+        a.add(rosterdb[j].first + " " + rosterdb[j].last)
+        b = a.get(site_player);
+        if (b !== null && b[0][0] >= 0.95){
+            //console.log(b[0][0] + " " + b[0][1]);
+            site_player_db_info.cost = rosterdb[j].cost;
+            site_player_db_info.year = rosterdb[j].year;
+            return site_player_db_info;
         }
+
     }
     return site_player_db_info;
 }
