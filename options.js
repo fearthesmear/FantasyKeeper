@@ -1,8 +1,8 @@
 // Saves options to chrome.storage
 function save_options() {
-    console.log("HI");
   chrome.storage.sync.set({
     sheetid: document.getElementById('sheetid').value,
+    worksheetnumber: document.getElementById('worksheetnumber').value,
     lastlabel: document.getElementById('lastlabel').value,
     firstlabel: document.getElementById('firstlabel').value,
     costlabel: document.getElementById('costlabel').value,
@@ -15,18 +15,18 @@ function save_options() {
   });
 }
 
-// Restores select box and checkbox state using the preferences
-// stored in chrome.storage.
+// Restores state using the preferences stored in chrome.storage.
 function restore_options() {
-  // Use default value color = 'red' and likesColor = true.
   chrome.storage.sync.get({
     sheetid: 'Enter ID here',
+    worksheetnumber: '1',
     lastlabel: 'Last',
     firstlabel: 'First',
     costlabel: 'Cost',
     yearlabel: 'Year'
   }, function(items) {
     document.getElementById('sheetid').value = items.sheetid;
+    document.getElementById('worksheetnumber').value = items.worksheetnumber;
     document.getElementById('lastlabel').value = items.lastlabel;
     document.getElementById('firstlabel').value = items.firstlabel;
     document.getElementById('costlabel').value = items.costlabel;

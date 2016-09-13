@@ -1,18 +1,16 @@
 /*!
-*
-*
+* Loads and displaya additional player data from Google Sheets.
 */
 
-// In Google Sheets how to autopopulate
-//    =CONCATENATE(ImportRange("1NjCm1SodkaagsRXvHM4BrThg1pM4d_DYxSC_Cibe1Ds","2016!B2"), ", ", (ImportRange("1NjCm1SodkaagsRXvHM4BrThg1pM4d_DYxSC_Cibe1Ds","2016!C2")))
-// TODO: Make extra data column names configurable to make more general.
-
+// Mutation obsrver settings.
 var observerConfig = {
     childList: true,
     characterData: true,
     subtree: false  // Prevents infinite loop in MutationObserver
 };
+// Extension options. Global due to async loading from Chrome storage.
 var sheetID = "";
+var worksheetNumber = "";
 var lastLabel = "";
 var firstLabel = "";
 var costLabel = "";
@@ -21,13 +19,14 @@ var yearLabel = "";
 
 $(document).ready(function(){
 
-    chrome.storage.sync.get(['sheetid', 'lastlabel', 'firstlabel', 'costlabel',
-                             'yearlabel'], function(items) {
-        sheetID = items.sheetid
-        lastLabel = items.lastlabel
-        firstLabel = items.firstlabel
-        costLabel = items.costlabel
-        yearLabel = items.yearlabel
+    chrome.storage.sync.get(['sheetid', 'worksheetnumber', 'lastlabel', 'firstlabel',
+                             'costlabel', 'yearlabel'], function(items) {
+        sheetID = items.sheetid;
+        worksheetNumber = items.worksheetnumber;
+        lastLabel = items.lastlabel;
+        firstLabel = items.firstlabel;
+        costLabel = items.costlabel;
+        yearLabel = items.yearlabel;
         importSheet( );
     }); // Async event due to .getJSON and Chrome storage retreival so need to
         // run rest of script from with .getJSON.
@@ -36,8 +35,9 @@ $(document).ready(function(){
 });
 
 function addESPNEvents() {
-    /* Reruns importSheet() when a button is clicked on the page. If this is
-       done, then the page does not render when a button is clicked.
+    /**
+    * Reruns importSheet() when a button is clicked on the page. If this is
+    * done, then the page does not render when a button is clicked.
     */
 
     var target = document.querySelector('.playerTableContainerDiv');
@@ -53,21 +53,17 @@ function addESPNEvents() {
 }
 
 function importSheet(items){
-    /* Get the Player Auction Values Google Sheet as JSON. Parse player auction
-     * information into an array. Since get JSON is an async function, the
-     * rest of the script that displays the player auction information will to
-     * be called from within.
-     */
+    /**
+    * Get the Player Auction Values Google Sheet as JSON. Parse player auction
+    * information into an array. Since get JSON is an async function, the
+    * rest of the script that displays the player auction information will to
+    * be called from within.
+    */
 
-    // ID of the Google Spreadsheet
-    var worksheetID = 1;
-
-    // Make sure it is public or set to Anyone with link can view
-    var url = "https://spreadsheets.google.com/feeds/list/" + sheetID + "/1/public/full?alt=json";
-
+    // Make sure it is public or set to anyone with link can view
+    var url = "https://spreadsheets.google.com/feeds/list/" + sheetID + "/"+ worksheetNumber + "/public/full?alt=json";
     var rosterdb = [];
     var rosterdbpop = [];
-
 
     $.getJSON(url, function(data) {
         for (i = 0; i < data.feed.entry.length; i++) {
@@ -83,56 +79,44 @@ function importSheet(items){
             }
             rosterdb.push(entry);
         }
-        console.log(rosterdb)
+
         // Get the site players and match to rosterdb
         roster = get_fantasy_site_player_names();
         var site_player_db_info = [];
-
         for (i = 0; i < roster.length; i++) {
             site_player_db_info.push(match_player_site_to_rosterdb(rosterdb, roster[i]));
-            console.log(roster[i] + " costs " + site_player_db_info.cost +
-                        " and was signed in " + site_player_db_info.year);
         }
         populate_site_player_table(site_player_db_info);
-
     });
 }
 
 function get_fantasy_site_player_names() {
+    /**
+    * Get the names of all players in the player table and return them in a
+    * list.
+    */
 
     roster = [];
     id = [];
     $('.playertablePlayerName').children([':first-child']).each(function () {
-        //console.log($(this).text());
         if ($(this).text() !== "" && $(this).text() !== "PP" &&
             $(this).text() !== "DL15" && $(this).text() !== "DL60" &&
             $(this).text() !== "DL7" && $(this).text() !== "SSPD" &&
             $(this).text() !== "DTD" && $(this).text() !== "S")
         {
           roster.push($(this).text());
-          // Example of changing text
-          //$(this).append(", ($1, 2016)")
-          $(this).append("")
         }
-        //$("<a>hi</a>").insertAfter($(this));
     });
-
-    // Example of getting attribute
-    $('.playertablePlayerName').children([':first-child']).each(function () {
-        //console.log($(this).text());
-        id.push($(this).attr("playerid"));
-    });
-    //console.log(roster);
-    //console.log(id);
     return roster;
 }
 
 function match_player_site_to_rosterdb(rosterdb, site_player){
-    /* Return the rosterdb entry for the player on the fantasy site roster
+    /**
+    * Return the rosterdb entry for the player on the fantasy site roster
     */
 
     var site_player_db_info = {
-        cost: '0',
+        cost: '--',
         year: '--'
     }
     // Break the site player name into first and last name
@@ -140,35 +124,42 @@ function match_player_site_to_rosterdb(rosterdb, site_player){
     first_name = site_player.substr(0, index);
     last_name = site_player.substr(index+1);
 
+    // Perform the string matching and populate a data structure for each player
     for (j = 0; j < rosterdb.length; j++){
         a = FuzzySet();
         a.add(rosterdb[j].first + " " + rosterdb[j].last)
         b = a.get(site_player);
         if (b !== null && b[0][0] >= 0.95){
-            //console.log(b[0][0] + " " + b[0][1]);
-            site_player_db_info.cost = rosterdb[j].cost;
+            site_player_db_info.cost = "$" + rosterdb[j].cost.toString();
             site_player_db_info.year = rosterdb[j].year;
             return site_player_db_info;
         }
-
     }
     return site_player_db_info;
 }
 
 function populate_site_player_table(site_player_db_info){
+    /**
+    * Display additional player information from the roster database for all
+    * players in the player table by adding additional td cells at the end
+    * of each player's row.
+    */
 
+    // Expand the above row's column span and add additional column headings
     var header = $('.playerTableTable tr:nth-child(2) td:nth-child(2)').text();
-    $('.playerTableTable tr:nth-child(1) th:last-child').attr('colspan', '5') // TODO: In other tabs this is not wide enough.
-                                                                              //       Need a way to figure out width of row below
-                                                                              //       and use that.
+    var col_width = $('.playerTableTable tr:nth-child(1) th:last-child').attr('colspan');
+    col_width = parseInt(col_width);
+    col_width = col_width + 2;
+    col_width = col_width.toString();
+    $('.playerTableTable tr:nth-child(1) th:last-child').attr('colspan', col_width);
     $('.playerTableTable tr:nth-child(2) td:last-child').after('<td width="25px">COST</td>');
     $('.playerTableTable tr:nth-child(2) td:last-child').after('<td width="25px">YEAR</td>');
+    $('.playerTableBgRowTotals td:last-child').attr('colspan', col_width);
 
     ii = 0;
     $('tr.pncPlayerRow td:last-child').each(function(){
-        // TODO: Can't just check for dashes. Doesn't work for all tabs.
         if ($(this).parent().children("td:nth-child(2)").text() != '\xa0'){
-            $(this).after('<td class="playertableData">$' + String(site_player_db_info[ii].cost) + '</td>');
+            $(this).after('<td class="playertableData">' + String(site_player_db_info[ii].cost) + '</td>');
             ii = ii + 1;
         }
         else{
@@ -185,5 +176,4 @@ function populate_site_player_table(site_player_db_info){
             $(this).after('<td class="playertableData">--</td>');
         }
     })
-
 }
