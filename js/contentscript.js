@@ -1,12 +1,17 @@
-/*!
-* Loads and displaya additional player data from Google Sheets.
+/*
+* Loads and display additional player data from Google Sheets into ESPN FBB.
 */
+
+// TODO: Deal with popup on button click.
+// TODO: Reloading is too slow. I don't want to have to reload the google sheet
+//       every time a page action happens. Either this is slowing it down or
+//       the name match is slowing it down.
 
 // Mutation obsrver settings.
 var observerConfig = {
     childList: true,
     characterData: true,
-    subtree: false  // Prevents infinite loop in MutationObserver
+    subtree: false  // Prevents infinite loop in MutationObserver after action
 };
 // Extension options. Global due to async loading from Chrome storage.
 var sheetID = "";
@@ -125,14 +130,15 @@ function match_player_site_to_rosterdb(rosterdb, site_player){
     last_name = site_player.substr(index+1);
 
     // Perform the string matching and populate a data structure for each player
+    var best_match_val = 0.0;
     for (j = 0; j < rosterdb.length; j++){
         a = FuzzySet();
         a.add(rosterdb[j].first + " " + rosterdb[j].last)
         b = a.get(site_player);
-        if (b !== null && b[0][0] >= 0.95){
+        if (b !== null && b[0][0] >= 0.925 && b[0][0] > best_match_val){
             site_player_db_info.cost = "$" + rosterdb[j].cost.toString();
             site_player_db_info.year = rosterdb[j].year;
-            return site_player_db_info;
+            best_match_val = b[0][0];
         }
     }
     return site_player_db_info;
