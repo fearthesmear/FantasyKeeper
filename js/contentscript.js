@@ -20,7 +20,7 @@ var lastLabel = "";
 var firstLabel = "";
 var costLabel = "";
 var yearLabel = "";
-
+var rosterdb = [];
 
 $(document).ready(function(){
 
@@ -67,32 +67,41 @@ function importSheet(items){
 
     // Make sure it is public or set to anyone with link can view
     var url = "https://spreadsheets.google.com/feeds/list/" + sheetID + "/"+ worksheetNumber + "/public/full?alt=json";
-    var rosterdb = [];
+    //var rosterdb = [];
     var rosterdbpop = [];
 
-    $.getJSON(url, function(data) {
-        for (i = 0; i < data.feed.entry.length; i++) {
-            var entry = {
-                first: eval("data.feed.entry[i].gsx$" + firstLabel.toLowerCase() + ".$t"),
-                last: eval("data.feed.entry[i].gsx$" + lastLabel.toLowerCase() + ".$t"),
-                team: data.feed.entry[i].gsx$team.$t,
-                position: data.feed.entry[i].gsx$position.$t,
-                mlb: data.feed.entry[i].gsx$mlb.$t,
-                year: eval("data.feed.entry[i].gsx$" + yearLabel.toLowerCase() + ".$t"),
-                cost: eval("data.feed.entry[i].gsx$" + costLabel.toLowerCase() + ".$t"),
-                minors: data.feed.entry[i].gsx$minors.$t,
+    if (rosterdb.length == 0){
+        $.getJSON(url, function(data) {
+            for (i = 0; i < data.feed.entry.length; i++) {
+                var entry = {
+                    first: eval("data.feed.entry[i].gsx$" + firstLabel.toLowerCase() + ".$t"),
+                    last: eval("data.feed.entry[i].gsx$" + lastLabel.toLowerCase() + ".$t"),
+                    team: data.feed.entry[i].gsx$team.$t,
+                    position: data.feed.entry[i].gsx$position.$t,
+                    mlb: data.feed.entry[i].gsx$mlb.$t,
+                    year: eval("data.feed.entry[i].gsx$" + yearLabel.toLowerCase() + ".$t"),
+                    cost: eval("data.feed.entry[i].gsx$" + costLabel.toLowerCase() + ".$t"),
+                    minors: data.feed.entry[i].gsx$minors.$t,
+                }
+                rosterdb.push(entry);
             }
-            rosterdb.push(entry);
-        }
-
+            // Get the site players and match to rosterdb
+            roster = get_fantasy_site_player_names();
+            var site_player_db_info = [];
+            for (i = 0; i < roster.length; i++) {
+                site_player_db_info.push(match_player_site_to_rosterdb(roster[i]));
+            }
+            populate_site_player_table(site_player_db_info);
+        });
+    } else {
         // Get the site players and match to rosterdb
         roster = get_fantasy_site_player_names();
         var site_player_db_info = [];
         for (i = 0; i < roster.length; i++) {
-            site_player_db_info.push(match_player_site_to_rosterdb(rosterdb, roster[i]));
+            site_player_db_info.push(match_player_site_to_rosterdb(roster[i]));
         }
         populate_site_player_table(site_player_db_info);
-    });
+    }
 }
 
 function get_fantasy_site_player_names() {
@@ -115,7 +124,7 @@ function get_fantasy_site_player_names() {
     return roster;
 }
 
-function match_player_site_to_rosterdb(rosterdb, site_player){
+function match_player_site_to_rosterdb(site_player){
     /**
     * Return the rosterdb entry for the player on the fantasy site roster
     */
