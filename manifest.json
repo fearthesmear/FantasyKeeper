@@ -1,19 +1,17 @@
 {
   "manifest_version": 2,
-
-  "name": "fantasykeeper",
+  "name": "Fantasy Keeper",
   "description": "Google Chrome Extension for ESPN Fantasy Baseball to display additional custom player information such as keeper league contracts. Uses Google Sheets as a backend.",
-  "version": "0.01",
+  "version": "0.1",
 
   "browser_action": {
     "default_icon": "baseballicon48.png",
-    "default_popup": "popup.html"
+    "default_popup": "html/popup.html"
   },
   "options_ui": {
-    "page": "options.html",
+    "page": "html/options.html",
     "chrome_style": true
   },
-
   "icons": {
       "48": "baseballicon48.png"
   },

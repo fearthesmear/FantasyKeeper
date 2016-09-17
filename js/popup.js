@@ -4,7 +4,7 @@ function hello() {
         chrome.runtime.openOptionsPage();
     } else {
         // Reasonable fallback.
-        window.open(chrome.runtime.getURL('options.html'));
+        window.open(chrome.runtime.getURL('/html/options.html'));
     }
 }
 
