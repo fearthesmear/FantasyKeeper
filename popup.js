@@ -1,9 +1,11 @@
-function myAlert(){
-    alert('Thank You For Using FantasyKeeper')
+function hello() {
+    if (chrome.runtime.openOptionsPage) {
+        // New way to open options pages, if supported (Chrome 42+).
+        chrome.runtime.openOptionsPage();
+    } else {
+        // Reasonable fallback.
+        window.open(chrome.runtime.getURL('options.html'));
+    }
 }
 
-function(){
-    document.addEventListener('DOMContentLoaded', function () {
-        document.getElementById('alertButton').addEventListener('onclick', myAlert);
-    });
-}
+document.getElementById('go-to-options').addEventListener('click', hello);
