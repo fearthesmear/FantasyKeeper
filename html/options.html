@@ -4,7 +4,8 @@
 </head>
 <body>
 
-<form>
+
+    <input type="button" value="Save" id="submit"><br>
     Google Sheet ID:<br>
     <input type="text" name="sheetid" size="60" id="sheetid"><br>
     Worksheet Number:<br>
@@ -17,10 +18,15 @@
     <input type="text" name="costlabel" id="costlabel"><br>
     Player Year Column Label:<br>
     <input type="text" name="yearlabel" id="yearlabel"><br>
-    <input type="button" value="Save" id="submit">
-</form>
+    <div class="input_fields_wrap">
+        <button class="add_field_button">Add More Fields</button>
+        <div><input type="text" name="mytext[]"></div>
+    </div>
 
+
+<script src="/js/jquery.min.js"></script>
 <script src="/js/options.js"></script>
+
 
 </body>
 </html>
