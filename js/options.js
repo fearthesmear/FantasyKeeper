@@ -5,8 +5,6 @@ function save_options() {
     worksheetnumber: document.getElementById('worksheetnumber').value,
     lastlabel: document.getElementById('lastlabel').value,
     firstlabel: document.getElementById('firstlabel').value,
-    costlabel: document.getElementById('costlabel').value,
-    yearlabel: document.getElementById('yearlabel').value
   }, function() {
     // Update status to let user know options were saved.
     setTimeout(function() {
@@ -22,15 +20,11 @@ function restore_options() {
     worksheetnumber: '1',
     lastlabel: 'Last',
     firstlabel: 'First',
-    costlabel: 'Cost',
-    yearlabel: 'Year'
   }, function(items) {
     document.getElementById('sheetid').value = items.sheetid;
     document.getElementById('worksheetnumber').value = items.worksheetnumber;
     document.getElementById('lastlabel').value = items.lastlabel;
     document.getElementById('firstlabel').value = items.firstlabel;
-    document.getElementById('costlabel').value = items.costlabel;
-    document.getElementById('yearlabel').value = items.yearlabel;
   });
 }
 
