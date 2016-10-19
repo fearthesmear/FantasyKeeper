@@ -1,10 +1,16 @@
 // Saves options to chrome.storage
 function save_options() {
+  var otherlabels = [];
+  $("input[name^='trackedfield']").each(function(){
+      console.log($(this).val());
+      otherlabels.push($(this).val());
+  })
   chrome.storage.sync.set({
     sheetid: document.getElementById('sheetid').value,
     worksheetnumber: document.getElementById('worksheetnumber').value,
     lastlabel: document.getElementById('lastlabel').value,
     firstlabel: document.getElementById('firstlabel').value,
+    labelarray: otherlabels
   }, function() {
     // Update status to let user know options were saved.
     setTimeout(function() {
@@ -20,11 +26,18 @@ function restore_options() {
     worksheetnumber: '1',
     lastlabel: 'Last',
     firstlabel: 'First',
+    labelarray: []
   }, function(items) {
     document.getElementById('sheetid').value = items.sheetid;
     document.getElementById('worksheetnumber').value = items.worksheetnumber;
     document.getElementById('lastlabel').value = items.lastlabel;
     document.getElementById('firstlabel').value = items.firstlabel;
+
+    var wrapper         = $(".input_fields_wrap"); //Fields wrapper
+    for (i = 0; i < items.labelarray.length; i++){
+        $(wrapper).append('<div><input type="text" name="trackedfield[]" value="' + items.labelarray[i] + '"/><a href="#" class="remove_field">Remove</a></div>'); //add input box
+    }
+
   });
 }
 
@@ -41,7 +54,7 @@ $(add_button).click(function(e){ //on add input button click
     e.preventDefault();
     if(x < max_fields){ //max input box allowed
         x++; //text box increment
-        $(wrapper).append('<div><input type="text" name="mytext[]"/><a href="#" class="remove_field">Remove</a></div>'); //add input box
+        $(wrapper).append('<div><input type="text" name="trackedfield[]"/><a href="#" class="remove_field">Remove</a></div>'); //add input box
     }
 });
 
