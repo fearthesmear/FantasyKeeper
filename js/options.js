@@ -11,12 +11,13 @@ function save_options() {
     lastlabel: document.getElementById('lastlabel').value,
     firstlabel: document.getElementById('firstlabel').value,
     labelarray: otherlabels
-  }, function() {
-    // Update status to let user know options were saved.
-    setTimeout(function() {
-      status.textContent = '';
-    }, 750);
   });
+  // Show 'Saved' status for short time to indicate success
+  document.getElementById('savedSpan').style.display = "block";
+  setTimeout(function() {
+    document.getElementById('savedSpan').style.display = "none";;
+}, 1000);
+
 }
 
 // Restores state using the preferences stored in chrome.storage.
