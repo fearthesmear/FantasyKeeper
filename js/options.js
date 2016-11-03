@@ -13,7 +13,7 @@ function save_options() {
     labelarray: otherlabels
   });
   // Show 'Saved' status for short time to indicate success
-  document.getElementById('savedSpan').style.display = "block";
+  document.getElementById('savedSpan').style.display = "inline";
   setTimeout(function() {
     document.getElementById('savedSpan').style.display = "none";;
 }, 1000);
