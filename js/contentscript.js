@@ -18,6 +18,8 @@ var sheetID = "";
 var worksheetNumber = "";
 var lastLabel = "";
 var firstLabel = "";
+var otherLables = [];
+var numOtherLabels = 0;
 var costLabel = "";
 var yearLabel = "";
 var rosterdb = [];
@@ -25,17 +27,20 @@ var rosterdb = [];
 $(document).ready(function(){
 
     chrome.storage.sync.get(['sheetid', 'worksheetnumber', 'lastlabel', 'firstlabel',
-                             'costlabel', 'yearlabel'], function(items) {
+                             'labelarray', 'costlabel', 'yearlabel'], function(items) {
         sheetID = items.sheetid;
         worksheetNumber = items.worksheetnumber;
         lastLabel = items.lastlabel;
         firstLabel = items.firstlabel;
+        otherLabels = items.labelarray;
         costLabel = items.costlabel;
         yearLabel = items.yearlabel;
+        numOtherLabels = otherLabels.length;
+        console.log(numOtherLabels);
+
         importSheet( );
     }); // Async event due to .getJSON and Chrome storage retreival so need to
         // run rest of script from with .getJSON.
-
     addESPNEvents();
 });
 
@@ -76,12 +81,13 @@ function importSheet(items){
                 var entry = {
                     first: eval("data.feed.entry[i].gsx$" + firstLabel.toLowerCase() + ".$t"),
                     last: eval("data.feed.entry[i].gsx$" + lastLabel.toLowerCase() + ".$t"),
-                    team: data.feed.entry[i].gsx$team.$t,
-                    position: data.feed.entry[i].gsx$position.$t,
-                    mlb: data.feed.entry[i].gsx$mlb.$t,
                     year: eval("data.feed.entry[i].gsx$" + yearLabel.toLowerCase() + ".$t"),
                     cost: eval("data.feed.entry[i].gsx$" + costLabel.toLowerCase() + ".$t"),
-                    minors: data.feed.entry[i].gsx$minors.$t,
+                }
+                // Add the dynamic fields that are set in the options menu to
+                // the player entry.
+                for (j = 0; j < numOtherLabels; j++) {
+                    entry[otherLabels[j]] = eval("data.feed.entry[i].gsx$" + otherLabels[j].toLowerCase() + ".$t")
                 }
                 rosterdb.push(entry);
             }
