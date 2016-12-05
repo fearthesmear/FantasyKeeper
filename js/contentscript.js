@@ -88,8 +88,10 @@ function importSheet(items){
                 // the player entry.
                 for (j = 0; j < numOtherLabels; j++) {
                     entry[otherLabels[j]] = eval("data.feed.entry[i].gsx$" + otherLabels[j].toLowerCase() + ".$t")
+                    //console.log(entry[otherLabels[j]])
                 }
                 rosterdb.push(entry);
+
             }
             // Get the site players and match to rosterdb
             roster = get_fantasy_site_player_names();
@@ -120,9 +122,10 @@ function get_fantasy_site_player_names() {
     id = [];
     $('.playertablePlayerName').children([':first-child']).each(function () {
         if ($(this).text() !== "" && $(this).text() !== "PP" &&
-            $(this).text() !== "DL15" && $(this).text() !== "DL60" &&
-            $(this).text() !== "DL7" && $(this).text() !== "SSPD" &&
-            $(this).text() !== "DTD" && $(this).text() !== "S")
+            $(this).text() !== "DL10" && $(this).text() !== "DL15" &&
+            $(this).text() !== "DL60" && $(this).text() !== "DL7" &&
+            $(this).text() !== "SSPD" && $(this).text() !== "DTD" &&
+            $(this).text() !== "S")
         {
           roster.push($(this).text());
         }
@@ -151,6 +154,14 @@ function match_player_site_to_rosterdb(site_player){
         a.add(rosterdb[j].first + " " + rosterdb[j].last)
         b = a.get(site_player);
         if (b !== null && b[0][0] >= 0.925 && b[0][0] > best_match_val){
+            // Get the dynamic fields and add them as fields to
+            // site_player_db_info
+            var keyNames = Object.keys(rosterdb[j]);
+            for(k = 2; k < keyNames.length; k++){
+                //console.log(keyNames[k])
+                site_player_db_info[keyNames[k]] = rosterdb[j][keyNames[k]].toString();
+                //console.log(site_player_db_info[keyNames[k]])
+            }
             site_player_db_info.cost = "$" + rosterdb[j].cost.toString();
             site_player_db_info.year = rosterdb[j].year;
             best_match_val = b[0][0];
