@@ -36,7 +36,6 @@ $(document).ready(function(){
         costLabel = items.costlabel;
         yearLabel = items.yearlabel;
         numOtherLabels = otherLabels.length;
-        console.log(numOtherLabels);
 
         importSheet( );
     }); // Async event due to .getJSON and Chrome storage retreival so need to
@@ -72,7 +71,6 @@ function importSheet(items){
 
     // Make sure it is public or set to anyone with link can view
     var url = "https://spreadsheets.google.com/feeds/list/" + sheetID + "/"+ worksheetNumber + "/public/full?alt=json";
-    //var rosterdb = [];
     var rosterdbpop = [];
 
     if (rosterdb.length == 0){
@@ -81,8 +79,6 @@ function importSheet(items){
                 var entry = {
                     first: eval("data.feed.entry[i].gsx$" + firstLabel.toLowerCase() + ".$t"),
                     last: eval("data.feed.entry[i].gsx$" + lastLabel.toLowerCase() + ".$t"),
-                    year: eval("data.feed.entry[i].gsx$" + yearLabel.toLowerCase() + ".$t"),
-                    cost: eval("data.feed.entry[i].gsx$" + costLabel.toLowerCase() + ".$t"),
                 }
                 // Add the dynamic fields that are set in the options menu to
                 // the player entry.
@@ -138,10 +134,12 @@ function match_player_site_to_rosterdb(site_player){
     * Return the rosterdb entry for the player on the fantasy site roster
     */
 
-    var site_player_db_info = {
-        cost: '--',
-        year: '--'
+    var site_player_db_info = {}
+    var keyNames = Object.keys(rosterdb[0]);
+    for(k = 2; k < keyNames.length; k++){
+            site_player_db_info[keyNames[k].toLowerCase()] = '--';
     }
+
     // Break the site player name into first and last name
     index = site_player.indexOf(" ");
     first_name = site_player.substr(0, index);
@@ -158,12 +156,8 @@ function match_player_site_to_rosterdb(site_player){
             // site_player_db_info
             var keyNames = Object.keys(rosterdb[j]);
             for(k = 2; k < keyNames.length; k++){
-                //console.log(keyNames[k])
-                site_player_db_info[keyNames[k]] = rosterdb[j][keyNames[k]].toString();
-                //console.log(site_player_db_info[keyNames[k]])
+                    site_player_db_info[keyNames[k].toLowerCase()] = rosterdb[j][keyNames[k]];
             }
-            site_player_db_info.cost = "$" + rosterdb[j].cost.toString();
-            site_player_db_info.year = rosterdb[j].year;
             best_match_val = b[0][0];
         }
     }
@@ -181,31 +175,31 @@ function populate_site_player_table(site_player_db_info){
     var header = $('.playerTableTable tr:nth-child(2) td:nth-child(2)').text();
     var col_width = $('.playerTableTable tr:nth-child(1) th:last-child').attr('colspan');
     col_width = parseInt(col_width);
-    col_width = col_width + 2;
+    col_width = col_width + numOtherLabels;
     col_width = col_width.toString();
     $('.playerTableTable tr:nth-child(1) th:last-child').attr('colspan', col_width);
-    $('.playerTableTable tr:nth-child(2) td:last-child').after('<td width="25px">COST</td>');
-    $('.playerTableTable tr:nth-child(2) td:last-child').after('<td width="25px">YEAR</td>');
+    var keyNames = Object.keys(site_player_db_info[0]);
+    for (i = keyNames.length - 1; i >= 0; i--){
+        // TODO: Set width based on column name length
+        $('.playerTableTable tr:nth-child(2) td:last-child').after('<td width="25px">' + keyNames[i].toUpperCase() + '</td>');
+    }
+
     $('.playerTableBgRowTotals td:last-child').attr('colspan', col_width);
 
+    // Populate the players
     ii = 0;
     $('tr.pncPlayerRow td:last-child').each(function(){
         if ($(this).parent().children("td:nth-child(2)").text() != '\xa0'){
-            $(this).after('<td class="playertableData">' + String(site_player_db_info[ii].cost) + '</td>');
+            for (k = 0; k < keyNames.length; k++){
+                $(this).after('<td class="playertableData">' + String(site_player_db_info[ii][keyNames[k]]) + '</td>');
+            }
             ii = ii + 1;
         }
         else{
-            $(this).after('<td class="playertableData">--</td>');
+            for (m = 0; m < keyNames.length; m++){
+                $(this).after('<td class="playertableData">--</td>');
+            }
         }
     })
-    ii = 0;
-    $('tr.pncPlayerRow td:last-child').each(function(){
-        if ($(this).parent().children("td:nth-child(2)").text() != '\xa0'){
-            $(this).after('<td class="playertableData">' + String(site_player_db_info[ii].year) + '</td>');
-            ii = ii + 1;
-        }
-        else{
-            $(this).after('<td class="playertableData">--</td>');
-        }
-    })
+
 }
