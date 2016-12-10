@@ -20,21 +20,17 @@ var lastLabel = "";
 var firstLabel = "";
 var otherLables = [];
 var numOtherLabels = 0;
-var costLabel = "";
-var yearLabel = "";
 var rosterdb = [];
 
 $(document).ready(function(){
 
     chrome.storage.sync.get(['sheetid', 'worksheetnumber', 'lastlabel', 'firstlabel',
-                             'labelarray', 'costlabel', 'yearlabel'], function(items) {
+                             'labelarray'], function(items) {
         sheetID = items.sheetid;
         worksheetNumber = items.worksheetnumber;
         lastLabel = items.lastlabel;
         firstLabel = items.firstlabel;
         otherLabels = items.labelarray;
-        costLabel = items.costlabel;
-        yearLabel = items.yearlabel;
         numOtherLabels = otherLabels.length;
 
         importSheet( );
