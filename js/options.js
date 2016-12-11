@@ -6,7 +6,7 @@ function save_options() {
       otherlabels.push($(this).val());
   })
   chrome.storage.sync.set({
-    sheetid: document.getElementById('sheetid').value,
+    sheeturl: document.getElementById('sheeturl').value,
     worksheetnumber: document.getElementById('worksheetnumber').value,
     lastlabel: document.getElementById('lastlabel').value,
     firstlabel: document.getElementById('firstlabel').value,
@@ -23,13 +23,13 @@ function save_options() {
 // Restores state using the preferences stored in chrome.storage.
 function restore_options() {
   chrome.storage.sync.get({
-    sheetid: 'Enter ID here',
+    sheeturl: 'Enter URL here',
     worksheetnumber: '1',
     lastlabel: 'Last',
     firstlabel: 'First',
     labelarray: []
   }, function(items) {
-    document.getElementById('sheetid').value = items.sheetid;
+    document.getElementById('sheeturl').value = items.sheeturl;
     document.getElementById('worksheetnumber').value = items.worksheetnumber;
     document.getElementById('lastlabel').value = items.lastlabel;
     document.getElementById('firstlabel').value = items.firstlabel;

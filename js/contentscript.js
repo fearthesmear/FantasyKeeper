@@ -14,7 +14,7 @@ var observerConfig = {
     subtree: false  // Prevents infinite loop in MutationObserver after action
 };
 // Extension options. Global due to async loading from Chrome storage.
-var sheetID = "";
+var sheetURL = "";
 var worksheetNumber = "";
 var lastLabel = "";
 var firstLabel = "";
@@ -24,9 +24,9 @@ var rosterdb = [];
 
 $(document).ready(function(){
 
-    chrome.storage.sync.get(['sheetid', 'worksheetnumber', 'lastlabel', 'firstlabel',
+    chrome.storage.sync.get(['sheeturl', 'worksheetnumber', 'lastlabel', 'firstlabel',
                              'labelarray'], function(items) {
-        sheetID = items.sheetid;
+        sheetURL = items.sheeturl;
         worksheetNumber = items.worksheetnumber;
         lastLabel = items.lastlabel;
         firstLabel = items.firstlabel;
@@ -66,7 +66,9 @@ function importSheet(items){
     */
 
     // Make sure it is public or set to anyone with link can view
-    var url = "https://spreadsheets.google.com/feeds/list/" + sheetID + "/"+ worksheetNumber + "/public/full?alt=json";
+    var split_sheet_url_string = sheetURL.split("/")
+    var sheetid = split_sheet_url_string[5]
+    var url = "https://spreadsheets.google.com/feeds/list/" + sheetid + "/"+ worksheetNumber + "/public/full?alt=json";
     var rosterdbpop = [];
 
     if (rosterdb.length == 0){
