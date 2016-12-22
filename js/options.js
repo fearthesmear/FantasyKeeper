@@ -36,7 +36,7 @@ function restore_options() {
 
     var wrapper         = $(".input_fields_wrap"); //Fields wrapper
     for (i = 0; i < items.labelarray.length; i++){
-        $(wrapper).append('<div><input type="text" name="trackedfield[]" value="' + items.labelarray[i] + '"/><a href="#" class="remove_field">Remove</a></div>'); //add input box
+        $(wrapper).append('<div><input type="text" size="30" name="trackedfield[]" value="' + items.labelarray[i] + '"/><a href="#" class="remove_field">Remove</a></div>'); //add input box
     }
 
   });
@@ -56,7 +56,7 @@ $(add_button).click(function(e){ //on add input button click
     e.preventDefault();
     if(x < max_fields){ //max input box allowed
         x++; //text box increment
-        $(wrapper).append('<div><input type="text" name="trackedfield[]"/><a href="#" class="remove_field">Remove</a></div>'); //add input box
+        $(wrapper).append('<div><input type="text" size="30" name="trackedfield[]"/><a href="#" class="remove_field">Remove</a></div>'); //add input box
     }
 });
 

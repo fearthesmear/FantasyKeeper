@@ -73,6 +73,7 @@ function importSheet(items){
 
     if (rosterdb.length == 0){
         $.getJSON(url, function(data) {
+            console.log(data)
             for (i = 0; i < data.feed.entry.length; i++) {
                 var entry = {
                     first: eval("data.feed.entry[i].gsx$" + firstLabel.toLowerCase() + ".$t"),
@@ -82,7 +83,6 @@ function importSheet(items){
                 // the player entry.
                 for (j = 0; j < numOtherLabels; j++) {
                     entry[otherLabels[j]] = eval("data.feed.entry[i].gsx$" + otherLabels[j].toLowerCase() + ".$t")
-                    //console.log(entry[otherLabels[j]])
                 }
                 rosterdb.push(entry);
 
@@ -94,7 +94,11 @@ function importSheet(items){
                 site_player_db_info.push(match_player_site_to_rosterdb(roster[i]));
             }
             populate_site_player_table(site_player_db_info);
-        });
+        })
+        .fail(function(){alert("FantasyKeeper Error: Invalid Google Sheets URL, "
+                               + "Inval Google Sheets sheet number, " +
+                               "or Google Sheet Sharing Permissions not properly configured");
+                         throw new Error("Abort");});
     } else {
         // Get the site players and match to rosterdb
         roster = get_fantasy_site_player_names();
@@ -104,6 +108,12 @@ function importSheet(items){
         }
         populate_site_player_table(site_player_db_info);
     }
+
+}
+
+function check_input(){
+    alert("FantasyKeeper Error: Invalid Google Sheets URL or " +
+          "Google Sheet Sharing Permissions not properly configured");
 }
 
 function get_fantasy_site_player_names() {
