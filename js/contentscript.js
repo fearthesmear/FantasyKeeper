@@ -75,10 +75,20 @@ function importSheet(items){
         $.getJSON(url, function(data) {
             console.log(data)
             for (i = 0; i < data.feed.entry.length; i++) {
-                var entry = {
-                    first: eval("data.feed.entry[i].gsx$" + firstLabel.toLowerCase() + ".$t"),
-                    last: eval("data.feed.entry[i].gsx$" + lastLabel.toLowerCase() + ".$t"),
+                try {
+                    var entry = {
+                        first: eval("data.feed.entry[i].gsx$" + firstLabel.toLowerCase() + ".$t"),
+                        last: eval("data.feed.entry[i].gsx$" + lastLabel.toLowerCase() + ".$t"),
+                    }
+                } catch(e) {
+                    if (e instanceof TypeError) {
+                        alert('FantasyKeeper Error: Invalid "Player Last Name '
+                              + 'Column Label" option specified or invalid '
+                              + '"Player First Name Column Label" specified.');
+                        throw new Error("Abort");
+                    }
                 }
+
                 // Add the dynamic fields that are set in the options menu to
                 // the player entry.
                 for (j = 0; j < numOtherLabels; j++) {
@@ -96,7 +106,7 @@ function importSheet(items){
             populate_site_player_table(site_player_db_info);
         })
         .fail(function(){alert("FantasyKeeper Error: Invalid Google Sheets URL, "
-                               + "Inval Google Sheets sheet number, " +
+                               + "invalid Google Sheets sheet number, " +
                                "or Google Sheet Sharing Permissions not properly configured");
                          throw new Error("Abort");});
     } else {
