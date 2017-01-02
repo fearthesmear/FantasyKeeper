@@ -79,12 +79,13 @@ function importSheet(items){
                     var entry = {
                         first: eval("data.feed.entry[i].gsx$" + firstLabel.toLowerCase() + ".$t"),
                         last: eval("data.feed.entry[i].gsx$" + lastLabel.toLowerCase() + ".$t"),
-                    }
+                }
                 } catch(e) {
                     if (e instanceof TypeError) {
-                        alert('FantasyKeeper Error: Invalid "Player Last Name '
-                              + 'Column Label" option specified or invalid '
-                              + '"Player First Name Column Label" specified.');
+                        alert('FantasyKeeper Error: Invalid PLAYER LAST NAME '
+                              + 'COLUMN LABEL option specified or invalid '
+                              + 'PLAYER FIRST NAME COLUMN LABEL option '
+                              + 'specified. Check Options menu settings.');
                         throw new Error("Abort");
                     }
                 }
@@ -92,7 +93,17 @@ function importSheet(items){
                 // Add the dynamic fields that are set in the options menu to
                 // the player entry.
                 for (j = 0; j < numOtherLabels; j++) {
-                    entry[otherLabels[j]] = eval("data.feed.entry[i].gsx$" + otherLabels[j].toLowerCase() + ".$t")
+                    try {
+                        entry[otherLabels[j]] = eval("data.feed.entry[i].gsx$" + otherLabels[j].toLowerCase() + ".$t")
+                    }
+                    catch(e) {
+                        if (e instanceof TypeError) {
+                            alert('FantasyKeeper Error: ' + otherLabels[j]
+                                  + ' is an invalid DISPLAY FIELD COLUMN '
+                                  + 'LABEL. Check Options menu settings.');
+                            throw new Error("Abort");
+                        }
+                    }
                 }
                 rosterdb.push(entry);
 
