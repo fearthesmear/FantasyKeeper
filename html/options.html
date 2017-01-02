@@ -3,8 +3,36 @@
 <head><title>My Test Extension Options</title>
 </head>
 <body>
+    <style>
+    table, th, td {
+        border: 1px solid black;
+    }
+    </style>
+    <center>
+    Displays additional player information, stored in a Google Sheet, inside
+    ESPN Fantasy Baseball Leagues. Each row in the Google Sheet represents a
+    player. Required columns are player first name and player last name. Specify
+    any additional columns to display below.
 
-
+    <br>
+    <table>
+        <tr>
+            <td><b>Last</b></td>
+            <td><b>First</b></td>
+            <td><b>Salary</b></td>
+        </tr>
+            <td>Ruth</td>
+            <td>Babe</td>
+            <td><b>50</b></td>
+        <tr>
+        </tr>
+            <td>Gehrig</td>
+            <td>Lou</td>
+            <td><b>45</b></td>
+        <tr>
+        </tr>
+    </table>
+    </center>
     <br>
     <b>Google Sheet Shareable Link</b><br>
     Click <i>Share</i> button in Google Sheet to open the <i>Share with
@@ -13,13 +41,16 @@
     set to <i>Anyone with link can view</i>.<br>
     <input type="text" name="sheeturl" size="60" id="sheeturl"><br><br>
     <b>Worksheet Number</b><br>
-    Left most worksheet is 1.<br>
+    Uses a single worksheet. Left most worksheet is 1.<br>
     <input type="text" name="worksheetnumber" size="30" id="worksheetnumber"><br><br>
     <b>Player Last Name Column Label</b><br>
+    Column must contain player last names.<br>
     <input type="text" name="lastlabel" size="30" id="lastlabel"><br><br>
     <b>Player First Name Column Label</b><br>
+    Column must contain player first names.<br>
     <input type="text" name="firstlabel" size="30" id="firstlabel"><br><br>
-    <b>Display Fields Column Labels</b>
+    <b>Display Fields Column Labels</b><br>
+    Add column names to be displayed.
     <div class="input_fields_wrap">
         &nbsp &nbsp &nbsp &nbsp
         <button class="add_field_button"><b>Add More Fields</b></button>
