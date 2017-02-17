@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Fantasy Keeper",
   "description": "Chrome Extension for ESPN Fantasy Baseball to display additional custom player information stored in Google Sheets.",
-  "version": "0.1",
+  "version": "0.12",
 
   "browser_action": {
     "default_icon": "baseballicon48.png",
