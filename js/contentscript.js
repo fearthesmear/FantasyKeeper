@@ -209,7 +209,8 @@ function populate_site_player_table(site_player_db_info){
     col_width = col_width.toString();
     $('.playerTableTable tr:nth-child(1) th:last-child').attr('colspan', col_width);
     var keyNames = Object.keys(site_player_db_info[0]);
-    for (i = keyNames.length - 1; i >= 0; i--){
+    //for (i = keyNames.length - 1; i >= 0; i--){
+    for (i = 0; i < keyNames.length; i++){
         // TODO: Set width based on column name length
         $('.playerTableTable tr:nth-child(2) td:last-child').after('<td width="25px">' + keyNames[i].toUpperCase() + '</td>');
     }
@@ -220,7 +221,8 @@ function populate_site_player_table(site_player_db_info){
     ii = 0;
     $('tr.pncPlayerRow td:last-child').each(function(){
         if ($(this).parent().children("td:nth-child(2)").text() != '\xa0'){
-            for (k = 0; k < keyNames.length; k++){
+            //for (k = 0; k < keyNames.length; k++){
+            for (k = keyNames.length - 1; k >= 0; k--){
                 $(this).after('<td class="playertableData">' + String(site_player_db_info[ii][keyNames[k]]) + '</td>');
             }
             ii = ii + 1;
