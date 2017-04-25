@@ -94,7 +94,8 @@ function importSheet(items){
                 // the player entry.
                 for (j = 0; j < numOtherLabels; j++) {
                     try {
-                        entry[otherLabels[j]] = eval("data.feed.entry[i].gsx$" + otherLabels[j].toLowerCase() + ".$t")
+                        entry[otherLabels[j]] = eval("data.feed.entry[i].gsx$" + otherLabels[j].replace(/\s/g, '').toLowerCase() + ".$t")
+                        console.log(otherLabels[j]);
                     }
                     catch(e) {
                         if (e instanceof TypeError) {
