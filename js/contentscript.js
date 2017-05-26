@@ -151,7 +151,8 @@ function get_fantasy_site_player_names() {
             $(this).text() !== "DL10" && $(this).text() !== "DL15" &&
             $(this).text() !== "DL60" && $(this).text() !== "DL7" &&
             $(this).text() !== "SSPD" && $(this).text() !== "DTD" &&
-            $(this).text() !== "K"    && $(this).text() !== "S")
+            $(this).text() !== "K"    && $(this).text() !== "S" &&
+            $(this).text() !== "!")
         {
           roster.push($(this).text());
         }
