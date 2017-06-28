@@ -21,17 +21,20 @@ var firstLabel = "";
 var otherLables = [];
 var numOtherLabels = 0;
 var rosterdb = [];
+var lastCacheUTC = 0
 
 $(document).ready(function(){
 
-    chrome.storage.sync.get(['sheeturl', 'worksheetnumber', 'lastlabel', 'firstlabel',
-                             'labelarray'], function(items) {
+    chrome.storage.sync.get({'sheeturl': "", 'worksheetnumber': "", 'lastlabel': "", 'firstlabel': "",
+                          'labelarray': [], '': '', 'lastcacheutc': 0, 'rosterdb': []}, function(items) {
         sheetURL = items.sheeturl;
         worksheetNumber = items.worksheetnumber;
         lastLabel = items.lastlabel;
         firstLabel = items.firstlabel;
         otherLabels = items.labelarray;
         numOtherLabels = otherLabels.length;
+        lastCacheUTC = items.lastcacheutc;
+        rosterdb = items.rosterdb;
 
         importSheet( );
     }); // Async event due to .getJSON and Chrome storage retreival so need to
