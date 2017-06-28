@@ -74,6 +74,10 @@ function importSheet(items){
     var url = "https://spreadsheets.google.com/feeds/list/" + sheetid + "/"+ worksheetNumber + "/public/full?alt=json";
     var rosterdbpop = [];
 
+    // Get the current UTC time
+    var current_utc = new Date().getTime();
+    console.log(current_utc);
+
     if (rosterdb.length == 0){
         $.getJSON(url, function(data) {
             console.log(data)
