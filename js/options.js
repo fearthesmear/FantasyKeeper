@@ -5,7 +5,7 @@ function save_options() {
       console.log($(this).val());
       otherlabels.push($(this).val());
   })
-  chrome.storage.sync.set({
+  chrome.storage.local.set({
     sheeturl: document.getElementById('sheeturl').value,
     worksheetnumber: document.getElementById('worksheetnumber').value,
     lastlabel: document.getElementById('lastlabel').value,
@@ -22,7 +22,7 @@ function save_options() {
 
 // Restores state using the preferences stored in chrome.storage.
 function restore_options() {
-  chrome.storage.sync.get({
+  chrome.storage.local.get({
     sheeturl: 'Enter URL here',
     worksheetnumber: '1',
     lastlabel: 'Last',

@@ -25,7 +25,7 @@ var lastCacheUTC = 0
 
 $(document).ready(function(){
 
-    chrome.storage.sync.get({'sheeturl': "", 'worksheetnumber': "", 'lastlabel': "", 'firstlabel': "",
+    chrome.storage.local.get({'sheeturl': "", 'worksheetnumber': "", 'lastlabel': "", 'firstlabel': "",
                           'labelarray': [], '': '', 'lastcacheutc': 0, 'rosterdb': []}, function(items) {
         sheetURL = items.sheeturl;
         worksheetNumber = items.worksheetnumber;
@@ -174,8 +174,12 @@ function match_player_site_to_rosterdb(site_player){
 
     var site_player_db_info = {}
     var keyNames = Object.keys(rosterdb[0]);
-    for(k = 2; k < keyNames.length; k++){
+    //for(k = 0; k < keyNames.length-2; k++){ new way works
+    //for(k = 2; k < keyNames.length; k++){ old way broken
+    for(k = 0; k < keyNames.length; k++){
+        if (keyNames[k].toLowerCase() != 'first' && keyNames[k].toLowerCase() != 'last'){
             site_player_db_info[keyNames[k].toLowerCase()] = '--';
+        }
     }
 
     // Break the site player name into first and last name
@@ -193,8 +197,12 @@ function match_player_site_to_rosterdb(site_player){
             // Get the dynamic fields and add them as fields to
             // site_player_db_info
             var keyNames = Object.keys(rosterdb[j]);
-            for(k = 2; k < keyNames.length; k++){
+            //for(k = 2; k < keyNames.length; k++){
+            //for(k = 0; k < keyNames.length-2; k++){
+            for(k = 0; k < keyNames.length; k++){
+                if (keyNames[k].toLowerCase() != 'first' && keyNames[k].toLowerCase() != 'last'){
                     site_player_db_info[keyNames[k].toLowerCase()] = rosterdb[j][keyNames[k]];
+                }
             }
             best_match_val = b[0][0];
         }
