@@ -75,12 +75,14 @@ function importSheet(items){
     var rosterdbpop = [];
 
     // Get the current UTC time
-    var current_utc = new Date().getTime();
-    console.log(current_utc);
+    var cacheRefreshSec = 3600
+    var currentUtc = new Date().getTime();
+    console.log(currentUtc);
 
-    if (rosterdb.length == 0){
+    if (rosterdb.length == 0 && (currentUtc - lastCacheUTC > cacheRefreshSec)){
+        rosterdb = [];
         $.getJSON(url, function(data) {
-            console.log(data)
+            //console.log(data)
             for (i = 0; i < data.feed.entry.length; i++) {
                 try {
                     var entry = {
@@ -102,7 +104,7 @@ function importSheet(items){
                 for (j = 0; j < numOtherLabels; j++) {
                     try {
                         entry[otherLabels[j]] = eval("data.feed.entry[i].gsx$" + otherLabels[j].replace(/\s/g, '').toLowerCase() + ".$t")
-                        console.log(otherLabels[j]);
+                        //console.log(otherLabels[j]);
                     }
                     catch(e) {
                         if (e instanceof TypeError) {
@@ -116,6 +118,9 @@ function importSheet(items){
                 rosterdb.push(entry);
 
             }
+            chrome.storage.local.set({lastcacheutc: currentUtc});
+            chrome.storage.local.set({rosterdb: rosterdb});
+            console.log("Updated cache")
             // Get the site players and match to rosterdb
             roster = get_fantasy_site_player_names();
             var site_player_db_info = [];
